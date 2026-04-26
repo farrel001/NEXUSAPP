@@ -1,691 +1,117 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>NEXUS | AI-Powered Futuristic Web</title>
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- GSAP for smooth animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <!-- Three.js for 3D background -->
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
-      }
-    }
-  </script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Webhook Sender</title>
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #050510;
-      color: #ffffff;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-    /* Canvas 3D Background */
-    #canvas-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  padding: 30px;
+  border-radius: 20px;
+  width: 350px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
 
-    /* Main content above canvas */
-    .content {
-      position: relative;
-      z-index: 2;
-    }
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    /* Glassmorphism + blur */
-    .glass {
-      background: rgba(15, 15, 35, 0.55);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 2rem;
-    }
+input, textarea {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
 
-    .glass-card {
-      background: rgba(20, 20, 45, 0.6);
-      backdrop-filter: blur(10px);
-      border-radius: 1.8rem;
-      border: 1px solid rgba(100, 108, 255, 0.3);
-      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      box-shadow: 0 20px 35px -15px rgba(0,0,0,0.3);
-    }
+input[type="file"] {
+  padding: 5px;
+}
 
-    .glass-card:hover {
-      transform: translateY(-8px) scale(1.01);
-      border-color: #8c6eff;
-      box-shadow: 0 30px 45px -12px rgba(100, 108, 255, 0.3);
-    }
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-    /* Gradient text */
-    .gradient-text {
-      background: linear-gradient(125deg, #c084fc, #6c74ff, #5b8cff);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: shimmer 3s linear infinite;
-    }
+button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
 
-    @keyframes shimmer {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
-    }
-
-    /* Buttons */
-    .btn-primary {
-      background: linear-gradient(95deg, #5f6cff, #b56eff);
-      border: none;
-      padding: 12px 32px;
-      border-radius: 50px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 5px 15px rgba(95,108,255,0.4);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: scale(1.03);
-      box-shadow: 0 10px 25px rgba(95,108,255,0.6);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 12px 32px;
-      border-radius: 50px;
-      font-weight: 500;
-      transition: 0.3s;
-      cursor: pointer;
-      color: #f0f0ff;
-    }
-
-    .btn-outline:hover {
-      border-color: #8c6eff;
-      background: rgba(140,110,255,0.15);
-    }
-
-    /* Navbar */
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.2rem 6%;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(16px);
-      background: rgba(5,5,20,0.7);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .logo {
-      font-size: 1.8rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: #ddd;
-      font-weight: 500;
-      transition: 0.2s;
-    }
-
-    .nav-links a:hover {
-      color: white;
-    }
-
-    /* Theme Toggle */
-    .theme-toggle {
-      background: rgba(255,255,255,0.1);
-      border-radius: 40px;
-      padding: 8px 16px;
-      cursor: pointer;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    /* Hero Section */
-    .hero {
-      min-height: 90vh;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      padding: 3rem 6%;
-      gap: 3rem;
-    }
-
-    .hero-left {
-      flex: 1.2;
-    }
-
-    .hero-badge {
-      background: rgba(100,108,255,0.2);
-      display: inline-block;
-      padding: 0.3rem 1rem;
-      border-radius: 40px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-left h1 {
-      font-size: 3.8rem;
-      font-weight: 800;
-      line-height: 1.2;
-    }
-
-    .hero-left p {
-      font-size: 1.2rem;
-      color: #b0b0d0;
-      max-width: 550px;
-      margin: 1.5rem 0;
-    }
-
-    .hero-stats {
-      display: flex;
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-
-    .stat-num {
-      font-size: 2rem;
-      font-weight: 700;
-    }
-
-    /* Interactive 3D Card on hero right */
-    .hero-right {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-    }
-
-    .floating-3d-card {
-      width: 280px;
-      height: 320px;
-      background: rgba(30,30,60,0.5);
-      backdrop-filter: blur(12px);
-      border-radius: 2rem;
-      padding: 1.5rem;
-      transform-style: preserve-3d;
-      transition: transform 0.2s;
-      cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    /* Services Grid */
-    .section {
-      padding: 5rem 6%;
-    }
-
-    .section-title {
-      font-size: 2.8rem;
-      font-weight: 700;
-      text-align: center;
-    }
-
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .service-item {
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .service-icon {
-      font-size: 2.8rem;
-      background: linear-gradient(135deg, #2a2a4a, #1a1a3a);
-      width: 80px;
-      height: 80px;
-      border-radius: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.5rem;
-      color: #8f9bff;
-    }
-
-    /* Live Counter */
-    .counter-section {
-      background: linear-gradient(115deg, #0a0a20, #12122e);
-      border-radius: 3rem;
-      margin: 2rem 6%;
-      padding: 3rem;
-      text-align: center;
-    }
-
-    .counter-flex {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-
-    .counter-box h3 {
-      font-size: 2.8rem;
-      font-weight: 800;
-    }
-
-    /* AI Chat Mini */
-    .chat-mini {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      z-index: 999;
-      cursor: pointer;
-    }
-
-    .chat-bubble {
-      background: #6c74ff;
-      width: 60px;
-      height: 60px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      transition: 0.3s;
-    }
-
-    .chat-window {
-      position: absolute;
-      bottom: 80px;
-      right: 0;
-      width: 280px;
-      background: rgba(15,15,35,0.95);
-      backdrop-filter: blur(16px);
-      border-radius: 1.5rem;
-      padding: 1rem;
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .chat-window input {
-      background: #1e1e3a;
-      border: none;
-      padding: 10px;
-      border-radius: 30px;
-      color: white;
-    }
-
-    /* Testimonials */
-    .testimonial-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-
-    /* Footer */
-    footer {
-      padding: 3rem 6%;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 2rem;
-    }
-
-    /* Mobile */
-    @media (max-width: 900px) {
-      .hero-left h1 { font-size: 2.5rem; }
-      .nav-links { display: none; }
-      .hero { flex-direction: column; text-align: center; }
-      .hero-stats { justify-content: center; }
-      .hero-left p { margin-left: auto; margin-right: auto; }
-      .section-title { font-size: 2rem; }
-    }
-
-    /* Dark/Light mode (dynamic class) */
-    body.light-mode {
-      background-color: #f0f2ff;
-      color: #121212;
-    }
-    body.light-mode .glass,
-    body.light-mode .glass-card,
-    body.light-mode .floating-3d-card,
-    body.light-mode .chat-window {
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(12px);
-      border-color: rgba(0,0,0,0.1);
-      color: #121212;
-    }
-    body.light-mode .service-icon {
-      background: #e0e4ff;
-      color: #5f6cff;
-    }
-    body.light-mode .btn-outline {
-      color: #1f1f3a;
-      border-color: #aaa;
-    }
-  </style>
+.status {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+</style>
 </head>
+
 <body>
 
-<div id="canvas-container"></div>
+<div class="card">
+  <h2>🚀 Webhook Sender</h2>
 
-<div class="content">
-  <nav>
-    <div class="logo"><span class="gradient-text">NEXUS</span> ◇</div>
-    <div class="nav-links">
-      <a href="#">Home</a>
-      <a href="#">Services</a>
-      <a href="#">Showcase</a>
-      <a href="#">Contact</a>
-    </div>
-    <div class="theme-toggle" id="themeToggle">
-      <i class="fas fa-sun"></i> <i class="fas fa-moon"></i>
-    </div>
-  </nav>
+  <textarea id="message" placeholder="Tulis pesan..."></textarea>
+  <input type="file" id="file">
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-left" data-aos="fade-up">
-      <div class="hero-badge"><i class="fas fa-brain"></i> AI-Powered Experience</div>
-      <h1>Revolusi <span class="gradient-text">Digital</span> <br>Generasi Baru</h1>
-      <p>Web dengan kecerdasan buatan, visual 3D interaktif, dan performa super cepat. Masa depan ada di sini.</p>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <button class="btn-primary" id="exploreBtn">Jelajahi <i class="fas fa-arrow-right"></i></button>
-        <button class="btn-outline" id="demoBtn">Demo 3D <i class="fas fa-cube"></i></button>
-      </div>
-      <div class="hero-stats">
-        <div><span class="stat-num" id="stat1">0</span><br>Proyek</div>
-        <div><span class="stat-num" id="stat2">0</span><br>Klien Puas</div>
-        <div><span class="stat-num" id="stat3">0</span><br>Inovasi</div>
-      </div>
-    </div>
-    <div class="hero-right">
-      <div class="floating-3d-card" id="interactiveCard">
-        <i class="fas fa-robot" style="font-size: 3rem; color: #8c6eff;"></i>
-        <h3 style="margin: 1rem 0;">AI Assistant</h3>
-        <p>Klik untuk interaksi realtime</p>
-        <div style="height: 8px; background: #2a2a4a; border-radius: 8px; margin: 1rem 0;"><div style="width: 65%; height: 8px; background: #6c74ff; border-radius: 8px;"></div></div>
-        <span id="cardResponse">✨ Siap membantu</span>
-      </div>
-    </div>
-  </section>
+  <button onclick="send()">Kirim</button>
 
-  <!-- Services with tilt effect -->
-  <div class="section">
-    <div class="section-title">Layanan <span class="gradient-text">Superior</span></div>
-    <div class="services-grid">
-      <div class="glass-card service-item" data-tilt>
-        <div class="service-icon"><i class="fas fa-microchip"></i></div>
-        <h3>AI & Otomasi</h3>
-        <p>Solusi cerdas dengan machine learning & prediksi realtime.</p>
-      </div>
-      <div class="glass-card service-item" data-tilt>
-        <div class="service-icon"><i class="fas fa-vr-cardboard"></i></div>
-        <h3>AR/VR Immersive</h3>
-        <p>Pengalaman imersif dengan WebXR dan 3D interaktif.</p>
-      </div>
-      <div class="glass-card service-item" data-tilt>
-        <div class="service-icon"><i class="fas fa-chart-line"></i></div>
-        <h3>Real-time Analytics</h3>
-        <p>Dashboard pintar dengan visualisasi mutakhir.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Live Counter Animation -->
-  <div class="counter-section glass">
-    <h2>Impact <span class="gradient-text">Digital</span> Kami</h2>
-    <div class="counter-flex">
-      <div class="counter-box"><h3 id="counter1">0</h3><p>Proyek Selesai</p></div>
-      <div class="counter-box"><h3 id="counter2">0</h3><p>Pengguna Aktif</p></div>
-      <div class="counter-box"><h3 id="counter3">0</h3><p>Reputasi +</p></div>
-    </div>
-  </div>
-
-  <!-- Testimonials with rating -->
-  <div class="section">
-    <div class="section-title">Apa kata <span class="gradient-text">Mereka?</span></div>
-    <div class="testimonial-grid">
-      <div class="glass-card" style="padding: 1.8rem;">
-        <i class="fas fa-quote-left" style="color:#6c74ff; font-size: 1.8rem;"></i>
-        <p style="margin:1rem 0">"Terobosan baru! Web ini benar-benar canggih dengan efek 3D dan AI yang responsif. Tim sangat visioner."</p>
-        <h4>— Amanda, CTO TechFuture</h4>
-      </div>
-      <div class="glass-card" style="padding: 1.8rem;">
-        <i class="fas fa-quote-left" style="color:#6c74ff; font-size: 1.8rem;"></i>
-        <p style="margin:1rem 0">"User experience yang luar biasa, performa mobile sangat mulus. Desain modern yang memukau."</p>
-        <h4>— Bima, Creative Director</h4>
-      </div>
-    </div>
-  </div>
-
-  <footer>
-    <div>
-      <h3 class="gradient-text">NEXUS</h3>
-      <p>© 2025 — Future-Ready Ecosystem</p>
-    </div>
-    <div><i class="fab fa-twitter"></i> <i class="fab fa-instagram"></i> <i class="fab fa-github"></i> <i class="fab fa-linkedin"></i></div>
-  </footer>
+  <div class="status" id="status"></div>
 </div>
 
-<!-- Floating AI Chat Mini -->
-<div class="chat-mini" id="chatMini">
-  <div class="chat-bubble"><i class="fas fa-comment-dots" style="font-size: 1.8rem;"></i></div>
-  <div class="chat-window" id="chatWindow">
-    <p><strong>Nexus AI</strong> 👋 Ada yang bisa saya bantu?</p>
-    <input type="text" id="chatInput" placeholder="Tanya sesuatu...">
-    <button id="sendChat" class="btn-primary" style="padding: 6px;">Kirim</button>
-    <div id="chatResponse" style="font-size: 0.8rem; margin-top: 5px;"></div>
-  </div>
-</div>
+<script>
+const webhook = "https://discord.com/api/webhooks/1426243015332335700/e0BJgr7YyV7Sa4GK9G7duNfFvqn25SgsCdE-9BwpUvY32St_jGyoru6Yf0jsiIOQK7Eq";
 
-<script type="module">
-  import * as THREE from 'three';
+function send() {
+  const fileInput = document.getElementById("file");
+  const message = document.getElementById("message").value;
+  const status = document.getElementById("status");
 
-  // Setup Three.js Background (Particles Galaxy)
-  const container = document.getElementById('canvas-container');
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x050510);
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 30;
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  container.appendChild(renderer.domElement);
+  let formData = new FormData();
 
-  // Particle system
-  const particlesGeometry = new THREE.BufferGeometry();
-  const particlesCount = 1500;
-  const posArray = new Float32Array(particlesCount * 3);
-  for(let i = 0; i < particlesCount * 3; i += 3) {
-    posArray[i] = (Math.random() - 0.5) * 120;
-    posArray[i+1] = (Math.random() - 0.5) * 80;
-    posArray[i+2] = (Math.random() - 0.5) * 80 - 40;
+  if (fileInput.files.length > 0) {
+    formData.append("file", fileInput.files[0]);
   }
-  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-  const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.2,
-    color: 0x8c6eff,
-    transparent: true,
-    opacity: 0.6,
-    blending: THREE.AdditiveBlending
+
+  formData.append("content", message);
+
+  fetch(webhook, {
+    method: "POST",
+    body: formData
+  })
+  .then(() => {
+    status.innerText = "✅ Terkirim!";
+  })
+  .catch(() => {
+    status.innerText = "❌ Gagal kirim";
   });
-  const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-  scene.add(particlesMesh);
-  
-  // Add floating torus knot for extra vibe
-  const knotGeo = new THREE.TorusKnotGeometry(1.2, 0.3, 100, 16);
-  const knotMat = new THREE.MeshStandardMaterial({ color: 0x6c74ff, emissive: 0x2a2a6a, roughness: 0.3, metalness: 0.7 });
-  const knot = new THREE.Mesh(knotGeo, knotMat);
-  scene.add(knot);
-  
-  const ambientLight = new THREE.AmbientLight(0x404060);
-  scene.add(ambientLight);
-  const pointLight = new THREE.PointLight(0xffffff, 1);
-  pointLight.position.set(10, 10, 10);
-  scene.add(pointLight);
-  
-  function animate() {
-    requestAnimationFrame(animate);
-    particlesMesh.rotation.y += 0.0005;
-    particlesMesh.rotation.x += 0.0003;
-    knot.rotation.x += 0.008;
-    knot.rotation.y += 0.012;
-    camera.position.x += (0 - camera.position.x) * 0.03;
-    camera.lookAt(0, 0, 0);
-    renderer.render(scene, camera);
-  }
-  animate();
-  
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-  
-  // GSAP Scroll Animations
-  import gsap from 'https://cdn.skypack.dev/gsap';
-  import ScrollTrigger from 'https://cdn.skypack.dev/gsap/ScrollTrigger';
-  gsap.registerPlugin(ScrollTrigger);
-  
-  gsap.from('.hero-left', { opacity: 0, x: -100, duration: 1, scrollTrigger: { trigger: '.hero', start: 'top 80%' } });
-  gsap.from('.services-grid .glass-card', { opacity: 0, y: 50, stagger: 0.2, duration: 0.8, scrollTrigger: { trigger: '.services-grid', start: 'top 80%' } });
-  
-  // Interactive 3D Card Tilt
-  const card = document.getElementById('interactiveCard');
-  card.addEventListener('mousemove', (e) => {
-    const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    card.style.transform = `rotateY(${x * 15}deg) rotateX(${y * -15}deg)`;
-  });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = 'rotateY(0deg) rotateX(0deg)';
-  });
-  card.addEventListener('click', () => {
-    document.getElementById('cardResponse').innerHTML = '🤖 AI: Halo! Saya asisten cerdas. Klik chat pojok kanan!';
-  });
-  
-  // Counter Animation (Hero Stats + Counter Section)
-  function animateNumber(element, start, end, duration) {
-    let range = end - start;
-    let current = start;
-    let stepTime = Math.abs(Math.floor(duration / range));
-    let timer = setInterval(() => {
-      current += 1;
-      element.innerText = current;
-      if (current >= end) clearInterval(timer);
-    }, stepTime);
-  }
-  // Trigger when visible
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        if (entry.target.id === 'stat1') {
-          animateNumber(document.getElementById('stat1'), 0, 187, 1500);
-          animateNumber(document.getElementById('stat2'), 0, 245, 1500);
-          animateNumber(document.getElementById('stat3'), 0, 89, 1500);
-          animateNumber(document.getElementById('counter1'), 0, 187, 1500);
-          animateNumber(document.getElementById('counter2'), 0, 12500, 2000);
-          animateNumber(document.getElementById('counter3'), 0, 99, 1200);
-          observer.unobserve(entry.target);
-        }
-      }
-    });
-  }, { threshold: 0.5 });
-  observer.observe(document.getElementById('stat1'));
-  
-  // Theme Toggle with body class
-  const themeToggle = document.getElementById('themeToggle');
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-    if(document.body.classList.contains('light-mode')) {
-      scene.background.setHex(0xf0f2ff);
-      particlesMaterial.color.setHex(0x5f6cff);
-    } else {
-      scene.background.setHex(0x050510);
-      particlesMaterial.color.setHex(0x8c6eff);
-    }
-  });
-  
-  // Chat Mini AI logic
-  const chatMini = document.getElementById('chatMini');
-  const chatWindow = document.getElementById('chatWindow');
-  const sendBtn = document.getElementById('sendChat');
-  const chatInput = document.getElementById('chatInput');
-  const chatResponseDiv = document.getElementById('chatResponse');
-  
-  chatMini.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (chatWindow.style.display === 'flex') chatWindow.style.display = 'none';
-    else chatWindow.style.display = 'flex';
-  });
-  sendBtn.addEventListener('click', () => {
-    const msg = chatInput.value.toLowerCase();
-    if (msg.includes('halo') || msg.includes('hai')) chatResponseDiv.innerHTML = '🤖 Halo juga! Ada yang bisa saya bantu?';
-    else if (msg.includes('fitur')) chatResponseDiv.innerHTML = '✨ Fitur unggulan: AI, 3D realtime, counter interaktif, dan theme toggle!';
-    else if (msg.includes('terima kasih')) chatResponseDiv.innerHTML = '❤️ Sama-sama! Senang membantu.';
-    else chatResponseDiv.innerHTML = '🧠 Coba tanya tentang fitur, halo, atau teknologi. Saya asisten pintar!';
-    chatInput.value = '';
-  });
-  
-  // Demo button 3D effect
-  document.getElementById('demoBtn').addEventListener('click', () => {
-    knot.visible = !knot.visible;
-    alert('Objek 3D knot ' + (knot.visible ? 'muncul' : 'tersembunyi') + '! Coba gerakkan mouse.');
-  });
-  document.getElementById('exploreBtn').addEventListener('click', () => {
-    document.querySelector('.services-grid').scrollIntoView({ behavior: 'smooth' });
-  });
-  
-  // Service card tilt effect simple
-  const tiltElements = document.querySelectorAll('[data-tilt]');
-  tiltElements.forEach(el => {
-    el.addEventListener('mousemove', (e) => {
-      const rect = el.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      el.style.transform = `perspective(1000px) rotateX(${y * 8}deg) rotateY(${x * 8}deg) translateY(-5px)`;
-    });
-    el.addEventListener('mouseleave', () => {
-      el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
-    });
-  });
+}
 </script>
 
-<!-- Add AOS fallback simple -->
-<style>
-  [data-aos] { opacity: 1 !important; transform: none !important; }
-  .floating-3d-card { transition: transform 0.1s ease; }
-  .counter-box h3 { font-family: monospace; }
-</style>
 </body>
-  </html>
+    </html>
