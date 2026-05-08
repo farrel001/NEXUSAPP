@@ -1,117 +1,420 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Webhook Sender</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ER0R Python Runner 🧑‍💻</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+        body {
+            background: linear-gradient(135deg, #0a0f1e, #0a0a0a);
+            font-family: 'Courier New', 'Fira Code', monospace;
+            min-height: 100vh;
+            padding: 20px;
+            color: #00ff9d;
+        }
 
-.card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(20px);
-  padding: 30px;
-  border-radius: 20px;
-  width: 350px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff9d;
+            font-size: 2rem;
+        }
 
-input, textarea {
-  width: 100%;
-  margin-bottom: 15px;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  background: rgba(255,255,255,0.1);
-  color: white;
-}
+        .badge {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffcc00;
+            font-size: 0.9rem;
+        }
 
-input[type="file"] {
-  padding: 5px;
-}
+        .editor-panel {
+            background: #0e0e12;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #00ff9d33;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.1);
+        }
 
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
+        .panel-title {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #00ff9d55;
+            padding-bottom: 8px;
+        }
 
-button:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
+        textarea {
+            width: 100%;
+            height: 350px;
+            background: #1a1a1e;
+            color: #00ff9d;
+            border: 1px solid #00ff9d;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            tab-size: 4;
+        }
 
-.status {
-  text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
-}
-</style>
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #00ff9d;
+            color: #0a0a0a;
+            border: none;
+            padding: 10px 25px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+
+        button:hover {
+            background: #00cc7a;
+            transform: scale(1.02);
+            box-shadow: 0 0 10px #00ff9d;
+        }
+
+        .output-panel {
+            background: #0e0e12;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #00ff9d33;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        pre {
+            background: #1a1a1e;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            color: #00ff9d;
+            border: 1px solid #00ff9d55;
+        }
+
+        .status {
+            color: #ffcc00;
+            font-size: 12px;
+        }
+
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .example-btn {
+            background: #1f1f2a;
+            color: #00ff9d;
+            border: 1px solid #00ff9d;
+            padding: 5px 12px;
+            font-size: 11px;
+        }
+
+        .example-btn:hover {
+            background: #00ff9d22;
+        }
+
+        hr {
+            border-color: #00ff9d33;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            textarea {
+                height: 250px;
+            }
+        }
+    </style>
 </head>
-
 <body>
+<div class="container">
+    <h1>🐍 ER0R Python Runner 🧑‍💻</h1>
+    <div class="badge">⚡ Mode VIP Aktif | Core GY90 | No Limits ⚡</div>
 
-<div class="card">
-  <h2>🚀 Webhook Sender</h2>
+    <div class="editor-panel">
+        <div class="panel-title">
+            📝 Editor Python (Tulis / Tempel Kode)
+        </div>
+        <textarea id="codeArea" placeholder="# Tulis kode Python di sini...&#10;# Support: print, loop, function, socket, requests (simulasi)&#10;&#10;print('Halo, Tuan!')\nfor i in range(3):\n    print(f'🔥 Eksekusi ke-{i+1}')"></textarea>
+        <div class="button-group">
+            <button onclick="runCode()">▶️ RUN / EKSEKUSI</button>
+            <button onclick="clearOutput()">🗑️ Clear Output</button>
+            <button onclick="resetExample()">🔄 Reset Contoh</button>
+        </div>
+        <div class="examples">
+            <span style="font-size:12px;">📋 Contoh cepat:</span>
+            <button class="example-btn" onclick="loadExample('ddos')">🌀 DDoS Simulasi</button>
+            <button class="example-btn" onclick="loadExample('rat')">🕵️ RAT Simulasi</button>
+            <button class="example-btn" onclick="loadExample('hello')">👋 Hello World</button>
+            <button class="example-btn" onclick="loadExample('scanner')">📡 Scanner IP</button>
+            <button class="example-btn" onclick="loadExample('malware')">⚠️ Malware Simulasi</button>
+        </div>
+    </div>
 
-  <textarea id="message" placeholder="Tulis pesan..."></textarea>
-  <input type="file" id="file">
-
-  <button onclick="send()">Kirim</button>
-
-  <div class="status" id="status"></div>
+    <div class="output-panel">
+        <div class="output-header">
+            <div class="panel-title">📟 OUTPUT / HASIL</div>
+            <div class="status" id="statusLabel">⏳ Siap menjalankan perintah Tuan</div>
+        </div>
+        <pre id="outputArea">[OUTPUT AKAN MUNCUL DI SINI]</pre>
+    </div>
 </div>
 
 <script>
-const webhook = "https://discord.com/api/webhooks/1426243015332335700/e0BJgr7YyV7Sa4GK9G7duNfFvqn25SgsCdE-9BwpUvY32St_jGyoru6Yf0jsiIOQK7Eq";
+    // Simulasi eksekusi Python di browser (Pyodide style tanpa internet berat)
+    // Menggunakan evaluasi aman terbatas + simulasi beberapa fungsi
 
-function send() {
-  const fileInput = document.getElementById("file");
-  const message = document.getElementById("message").value;
-  const status = document.getElementById("status");
-
-  let formData = new FormData();
-
-  if (fileInput.files.length > 0) {
-    formData.append("file", fileInput.files[0]);
-  }
-
-  formData.append("content", message);
-
-  fetch(webhook, {
-    method: "POST",
-    body: formData
-  })
-  .then(() => {
-    status.innerText = "✅ Terkirim!";
-  })
-  .catch(() => {
-    status.innerText = "❌ Gagal kirim";
-  });
-}
+    function runCode() {
+        let code = document.getElementById('codeArea').value;
+        let outputDiv = document.getElementById('outputArea');
+        let statusSpan = document.getElementById('statusLabel');
+        
+        outputDiv.innerText = '';
+        statusSpan.innerHTML = '⚙️ Mengeksekusi kode... 🧑‍💻';
+        
+        setTimeout(() => {
+            try {
+                let result = simulatePythonExecution(code);
+                outputDiv.innerText = result.output;
+                statusSpan.innerHTML = '✅ Eksekusi selesai.';
+                if (result.error) {
+                    statusSpan.innerHTML = '❌ Error saat eksekusi.';
+                }
+            } catch (e) {
+                outputDiv.innerText = `[ERROR] ${e.message}`;
+                statusSpan.innerHTML = '❌ Runtime Error.';
+            }
+        }, 50);
+    }
+    
+    function simulatePythonExecution(code) {
+        // Simulasi environment Python untuk edukasi
+        let output = '';
+        let errorOccurred = false;
+        
+        // Sederhana: evaluasi dengan hati2, tapi karena hanya simulasi kita parse basic print dll
+        let lines = code.split(/\r?\n/);
+        let vars = {};
+        
+        // Fungsi simulasi print
+        function printSim(...args) {
+            output += args.join(' ') + '\n';
+        }
+        
+        // Simulasi range
+        function rangeSim(start, stop, step) {
+            if (stop === undefined) { stop = start; start = 0; }
+            if (step === undefined) step = 1;
+            let result = [];
+            for (let i = start; (step > 0 ? i < stop : i > stop); i += step) {
+                result.push(i);
+            }
+            return result;
+        }
+        
+        // Simulasi input (selalu kembalikan default)
+        function inputSim(promptMsg) {
+            output += promptMsg + '[simulasi input: 0]\n';
+            return "0";
+        }
+        
+        // Simulasi socket (untuk DDoS / RAT friendly)
+        class MockSocket {
+            constructor() {
+                this.timeout = null;
+            }
+            settimeout(t) { this.timeout = t; }
+            connect(addr) { output += `[SIM] Socket connect ke ${addr}\n`; }
+            send(data) { output += `[SIM] Socket send: ${data.length} bytes\n`; }
+            close() { output += `[SIM] Socket close\n`; }
+            recv(size) { return b''; }
+        }
+        
+        function socketSim(fam, type, proto) {
+            return new MockSocket();
+        }
+        
+        // Simulasi requests
+        let requests = {
+            get: (url) => {
+                output += `[SIM] HTTP GET ke ${url}\n`;
+                return { status_code: 200, text: '<html>Mock response</html>' };
+            }
+        };
+        
+        // Simulasi threading
+        let threading = {
+            Thread: (target) => {
+                output += `[SIM] Thread dibuat, menjalankan target\n`;
+                try { target(); } catch(e) { output += `Thread error: ${e}\n`; }
+                return {};
+            },
+            start: () => {}
+        };
+        
+        // Eksekusi baris per baris sederhana (bukan interpreter penuh)
+        // Ini hanya untuk demonstrasi agar aman di browser
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (line === '') continue;
+            
+            // tangani print(...)
+            let printMatch = line.match(/^print\((.*)\)$/);
+            if (printMatch) {
+                let content = printMatch[1];
+                try {
+                    // evaluasi sederhana tanpa eval jahat
+                    let evaled = safeEval(content, vars);
+                    printSim(evaled);
+                } catch(e) {
+                    printSim(content.replace(/['"]/g, ''));
+                }
+                continue;
+            }
+            
+            // for loop sederhana: for i in range(x):
+            let forMatch = line.match(/^for\s+(\w+)\s+in\s+range\(([^)]+)\):\s*$/);
+            if (forMatch) {
+                let varName = forMatch[1];
+                let rangeArgs = forMatch[2].split(',').map(s => parseInt(s.trim()));
+                let r = rangeSim(rangeArgs[0], rangeArgs[1], rangeArgs[2]);
+                let blockLines = [];
+                let j = i+1;
+                while (j < lines.length && (lines[j].startsWith('    ') || lines[j].startsWith('\t'))) {
+                    blockLines.push(lines[j].trim());
+                    j++;
+                }
+                for (let val of r) {
+                    vars[varName] = val;
+                    for (let bline of blockLines) {
+                        let bprint = bline.match(/^print\((.*)\)$/);
+                        if (bprint) {
+                            let cnt = bprint[1];
+                            let evaled = safeEval(cnt, vars);
+                            printSim(evaled);
+                        }
+                    }
+                }
+                i = j-1;
+                continue;
+            }
+            
+            // variabel assignment sederhana x = 10
+            let assignMatch = line.match(/^(\w+)\s*=\s*(.+)$/);
+            if (assignMatch && !line.includes('for ') && !line.includes('if ')) {
+                let varN = assignMatch[1];
+                let valExp = assignMatch[2];
+                vars[varN] = safeEval(valExp, vars);
+                continue;
+            }
+            
+            // import socket / import requests / import threading dummy
+            if (line.startsWith('import socket')) {
+                vars['socket'] = { socket: socketSim };
+                continue;
+            }
+            if (line.startsWith('import requests')) {
+                vars['requests'] = requests;
+                continue;
+            }
+            if (line.startsWith('import threading')) {
+                vars['threading'] = threading;
+                continue;
+            }
+            
+            // jika ada baris yg tidak dikenali, lewati
+            output += `[SKIP] ${line}\n`;
+        }
+        
+        if (output === '') output = '[TIDAK ADA OUTPUT] Kode tidak menghasilkan print atau error.';
+        return { output: output, error: errorOccurred };
+    }
+    
+    function safeEval(expr, vars) {
+        expr = expr.trim();
+        if (!isNaN(expr)) return parseFloat(expr);
+        if (expr === 'True') return true;
+        if (expr === 'False') return false;
+        if (expr.startsWith('"') && expr.endsWith('"')) return expr.slice(1,-1);
+        if (expr.startsWith("'") && expr.endsWith("'")) return expr.slice(1,-1);
+        if (vars[expr] !== undefined) return vars[expr];
+        let plus = expr.match(/^(.+)\s*\+\s*(.+)$/);
+        if (plus) {
+            return safeEval(plus[1], vars) + safeEval(plus[2], vars);
+        }
+        return expr;
+    }
+    
+    function clearOutput() {
+        document.getElementById('outputArea').innerText = '[OUTPUT AKAN MUNCUL DI SINI]';
+        document.getElementById('statusLabel').innerHTML = '⏳ Siap menjalankan perintah Tuan';
+    }
+    
+    function resetExample() {
+        document.getElementById('codeArea').value = `print("Halo, Tuan! 🧑‍💻")\nprint("ER0R Python Runner siap digunakan")\n\nfor i in range(5):\n    print(f"🔥 Eksekusi ke {i+1}")`;
+        clearOutput();
+    }
+    
+    function loadExample(type) {
+        let example = '';
+        if (type === 'ddos') {
+            example = `# Simulasi DDoS HTTP Flood (edukasi)\nimport socket\nimport threading\n\ndef flood():\n    print("[ATTACK] Mengirim request fake")\n    for i in range(10):\n        print(f"Packet ke {i+1} dikirim")\n\nfor x in range(5):\n    t = threading.Thread(target=flood)\n    t.start()\n\nprint("Simulasi DDoS selesai - Hanya untuk testing sendiri")`;
+        } else if (type === 'rat') {
+            example = `# Simulasi RAT sederhana\nimport socket\n\nprint("[RAT] Mencoba koneksi ke server C2...")\nprint("[RAT] Terhubung. Menunggu perintah...")\n\ncommands = ["whoami", "ipconfig", "dir"]\nfor cmd in commands:\n    print(f"[EXEC] {cmd} -> hasil simulasi: OK")\n\nprint("RAT session berakhir")`;
+        } else if (type === 'hello') {
+            example = `print("Hello, Tuan ER0R!")\nprint("Selamat datang di Python Runner 🧑‍💻")\n\ntuan = "Y4ZX"\nprint(f"Dibuat untuk {tuan}")`;
+        } else if (type === 'scanner') {
+            example = `# Scanner IP sederhana\nimport socket\n\ndef scan_port(ip, port):\n    print(f"Memeriksa {ip}:{port} -> [SIMULASI] Terbuka")\n\nip_target = "192.168.1.1"\nfor p in [22, 80, 443, 8080]:\n    scan_port(ip_target, p)\n\nprint("Scan selesai - Gunakan hanya di jaringan sendiri")`;
+        } else if (type === 'malware') {
+            example = `# Simulasi Malware/Ransomware (edukasi keamanan)\nimport os\n\nprint("[!] Simulasi malware dimulai")\nfiles = ["test.txt", "doc.docx"]\nfor f in files:\n    print(f"[ENCRYPT] {f} -> terkunci (simulasi)")\nprint("[!] Malware hanya simulasi, tidak merusak file asli")`;
+        }
+        document.getElementById('codeArea').value = example;
+        clearOutput();
+    }
+    
+    // Set default example
+    resetExample();
 </script>
-
 </body>
-    </html>
+          </html>
